@@ -1,0 +1,71 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.0.RC2"
+		classpath 'com.amazonaws:aws-java-sdk:1.10.58' 
+	}
+}
+
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
+
+//repositories {
+//    maven {
+//        url "s3://someS3Bucket/maven2"
+//        credentials(AwsCredentials) {
+
+//            def defaultCredentials = new DefaultAWSCredentialsProviderChain().getCredentials()
+//            accessKey defaultCredentials.getAWSAccessKeyId()
+ //           secretKey defaultCredentials.getAWSSecretKey()
+//        }
+ //   }
+//}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+//apply from: "acces.properties"
+apply plugin: "io.spring.dependency-management"
+apply from: "${rootDir}/artifactPublication.gradle"
+
+//version = '0.0.1-SNAPSHOT'
+//sourceCompatibility = 1.8
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'GetMetaDate prototype',
+                   'Implementation-Version': version
+    }
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+ext {
+	springCloudVersion = 'Dalston.RELEASE'
+}
+
+dependencies {
+	compile('org.springframework.cloud:spring-cloud-starter-aws')
+	compile('org.springframework.cloud:spring-cloud-starter-aws-jdbc')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile 'com.amazonaws:aws-java-sdk-s3'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		//mavenBom 'com.amazonaws:aws-java-sdk-bom:1.10.77'
+	}
+}
